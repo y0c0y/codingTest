@@ -21,7 +21,7 @@ for i in range(T):
     a1 = 0
     a2= 0
     minGap = float("inf")
-    for j in range(1, n // 2 + 1):
+    for j in range(n // 2,  1, -1):
         if arr[j] and arr[n-j]:
             gap = n-2*j
             if minGap > gap:
