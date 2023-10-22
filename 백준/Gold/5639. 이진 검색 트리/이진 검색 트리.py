@@ -1,38 +1,20 @@
 import sys
-
-sys.setrecursionlimit(10**6)
-
-
-def postorder_from_preorder(preorder, start=0, end=None):
-    if end is None:
-        end = len(preorder)
-
-    if start >= end:
-        return []
-
-    root = preorder[start]
-
-    # Find the first element greater than the root.
-    # This marks the start of the right subtree.
-    i = start + 1
-    while i < end and preorder[i] < root:
-        i += 1
-
-    # Recursively generate postorder sequence for left and right subtrees.
-    left_postorder = postorder_from_preorder(preorder, start + 1, i)
-    right_postorder = postorder_from_preorder(preorder, i, end)
-
-    return left_postorder + right_postorder + [root]
-
-
-number = []
-while True:
+sys.setrecursionlimit(10 ** 6)
+num_list = []
+while 1:
     try:
-        number.append(int(sys.stdin.readline()))
+        num_list.append(int(sys.stdin.readline()))
     except:
         break
-
-
-result = postorder_from_preorder(number)
-for node in result:
-    print(node)
+def postorder(first, end):
+    if first > end: # 재귀 종료 조건 : 루트가 남은것보다 크면 안되서
+        return
+    mid = end + 1 # root 보다 큰 값이 존재 하지 않는 경우에 # mid 9
+    for idx in range(first+1,end+1):
+        if num_list[first] < num_list[idx]: # 루트보다 큰 값을 mid로 설정하는거(인덱스)
+            mid = idx
+            break
+    postorder(first+1, mid-1) # 왼쪽 서브트리
+    postorder(mid, end) # 오른쪽 서브트리
+    print(num_list[first]) # 후위 순회니까 자기 자신을 지금 찍어
+postorder(0,len(num_list)-1) # 0, 8
