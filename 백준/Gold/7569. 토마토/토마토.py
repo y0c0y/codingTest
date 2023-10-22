@@ -1,55 +1,63 @@
 import sys
 from collections import deque
 
-m, n, h = map(int, input().split())
+directions = [
+    (0, -1, 0),
+    (0, 1, 0),
+    (-1, 0, 0),
+    (1, 0, 0),
+    (0, 0, 1),
+    (0, 0, -1),
+]  # 위, 아래, 왼쪽, 오른쪽, 앞, 뒤 # (X, Y, Z)
 
-matrix = [[list(map(int, sys.stdin.readline().split())) for _ in range(n)] for _ in range(h)]
-visited = [[[False]*m for _ in range(n)] for _ in range(h)]
+M, N, H = map(int, sys.stdin.readline().split())
 
-queue = deque()
+boxes = [
+    [list(map(int, sys.stdin.readline().split())) for _ in range(N)] for _ in range(H)
+]
+day = 0
 
-dx = [-1,1,0,0,0,0]
-dy = [0,0,-1,1,0,0]
-dz = [0,0,0,0,-1,1]
 
-answer = 0
+def isIndex(x, y, z):
+    if -1 < x < M and -1 < y < N and -1 < z < H:
+        return True
+    return False
+
+
+def resetVisited():
+    return [[[False for _ in range(M)] for _ in range(N)] for _ in range(H)]
+
 
 def bfs():
-    while queue:
-        x,y,z = queue.popleft()
+    deq = deque()
 
-        for i in range(6):
-            nx = x + dx[i]
-            ny = y + dy[i]
-            nz = z + dz[i]
+    for z in range(H):
+        for y in range(N):
+            for x in range(M):
+                if boxes[z][y][x] == 1:
+                    deq.append((x, y, z))
+    cnt = 0
+    while deq:
+        for _ in range(len(deq)):
+            x, y, z = deq.popleft()
+            for nx, ny, nz in directions:
+                dx = x + nx
+                dy = y + ny
+                dz = z + nz
+                if isIndex(dx, dy, dz) and not boxes[dz][dy][dx]:
+                    boxes[dz][dy][dx] += 1
+                    deq.append((dx, dy, dz))
+        cnt += 1
+    return cnt
 
-            if nx < 0 or nx >= h or ny < 0 or ny >= n or nz < 0 or nz >= m:
-                continue
 
-            if matrix[nx][ny][nz] == 0 and visited[nx][ny][nz] == False:
-                queue.append((nx,ny,nz))
-                matrix[nx][ny][nz] = matrix[x][y][z] + 1
-                visited[nx][ny][nz] = True
+day = bfs()
 
-
-# 모두 1이 아닐 경우
-
-for a in range(h):
-    for b in range(n):
-        for c in range(m):
-            if matrix[a][b][c] == 1 and visited[a][b][c] == 0:
-                queue.append((a,b,c))
-                visited[a][b][c] = True
-bfs()
-
-# 토마토 확인
-
-for a in matrix:
-    for b in a:
-        for c in b:
-            if c == 0:
+for k in range(H):
+    for i in range(N):
+        for j in range(M):
+            if boxes[k][i][j] == 0:
                 print(-1)
-                exit(0)            
-        answer = max(answer, max(b))
+                exit(0)
 
-print(answer-1)
+print(day - 1)
