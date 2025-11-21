@@ -1,0 +1,57 @@
+using System;
+using System.Linq;
+using System.Collections.Generic;
+using System.Text;
+using System.IO;
+
+
+namespace goorm
+{
+	class Program
+	{
+
+	private const int BufferSize = 1 <<16;
+
+	private static readonly StreamReader sr =  new StreamReader(new BufferedStream(Console.OpenStandardInput(), BufferSize));
+	private static readonly StreamWriter sw =  new StreamWriter(new BufferedStream(Console.OpenStandardOutput(), BufferSize));
+
+
+	
+		static void Main(string[] args)
+		{
+			var input = sr.ReadLine().Split().Select(int.Parse).ToArray();
+
+			var a = new List<int>();
+
+			for(var i = 0; i < input[0]; i++)
+				{
+					var cmd = sr.ReadLine().Split();
+					var cnt = a.Count;
+					if(cmd[0] == "push")
+					{
+						if(cnt >= input[1]) sw.WriteLine("Overflow");
+						else {
+							a.Add(int.Parse(cmd[1]));
+						}
+					}
+					if(cmd[0] == "pop")
+					{
+						if(cnt < 1) sw.WriteLine("Underflow");
+						else{
+							sw.WriteLine(a[cnt-1]);
+							a.RemoveAt(cnt-1);
+						}
+						
+					}
+				}
+			
+
+			
+			sw.Flush();
+			sr.Close();
+			sw.Close();
+			
+			
+		}
+	}
+}
